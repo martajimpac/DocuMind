@@ -2,33 +2,16 @@ package com.example.chatbot.ui.screens.detail
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Send
-import androidx.compose.material.icons.filled.AutoAwesome
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -37,237 +20,176 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import com.example.chatbot.R
+import com.example.chatbot.ui.components.CitationCard
+import com.example.chatbot.ui.components.CitedParagraph
+import com.example.chatbot.ui.components.DmEdge
+import com.example.chatbot.ui.components.DmIconButton
+import com.example.chatbot.ui.components.DmIconButtonStyle
+import com.example.chatbot.ui.components.DmIconTile
+import com.example.chatbot.ui.components.DmPillField
+import com.example.chatbot.ui.components.DmPillFieldStyle
+import com.example.chatbot.ui.components.UserMessageBubble
+import com.example.chatbot.ui.components.hairlineEdge
 import com.example.chatbot.ui.theme.ChatbotTheme
+import com.example.chatbot.ui.theme.Dimens
+import com.example.chatbot.ui.theme.DocuMindTheme
 
-data class ChatMessage(
-    val id: String,
-    val text: String,
-    val isUser: Boolean,
-    val timestamp: String
-)
+/** Entries of the local, sample conversation. */
+sealed interface ChatEntry {
+    val id: String
+
+    /** Sample question from the design, read from resources so it follows the device language. */
+    data object SampleQuestion : ChatEntry {
+        override val id = "sample-question"
+    }
+
+    /** Sample cited answer from the design. */
+    data object SampleAnswer : ChatEntry {
+        override val id = "sample-answer"
+    }
+
+    /** Question typed by the user in this session. */
+    data class UserQuestion(override val id: String, val text: String) : ChatEntry
+}
+
+// The sample answer cites page 12 of the sample document.
+private const val SAMPLE_CITATION = 1
+private const val SAMPLE_CITED_PAGE = 12
 
 @Composable
-fun ChatTab(
-    modifier: Modifier = Modifier
-) {
+fun ChatTab(modifier: Modifier = Modifier) {
     var messageText by remember { mutableStateOf("") }
+    var entries by remember { mutableStateOf(listOf<ChatEntry>(ChatEntry.SampleQuestion, ChatEntry.SampleAnswer)) }
 
-    val initialMessages = remember {
-        listOf(
-            ChatMessage(
-                id = "1",
-                text = "¡Hola! Soy tu asistente para este cuaderno. He analizado tus fuentes cargadas. ¿En qué te puedo ayudar hoy?",
-                isUser = false,
-                timestamp = "10:30 AM"
+    Column(modifier = modifier.fillMaxSize().imePadding()) {
+        LazyColumn(
+            modifier = Modifier.weight(1f).fillMaxWidth(),
+            contentPadding = PaddingValues(
+                start = Dimens.screenPadding,
+                end = Dimens.screenPadding,
+                top = Dimens.space24,
+                bottom = Dimens.space20,
             ),
-            ChatMessage(
-                id = "2",
-                text = "¿Me podrías hacer un resumen de los puntos principales de la primera fuente?",
-                isUser = true,
-                timestamp = "10:31 AM"
-            ),
-            ChatMessage(
-                id = "3",
-                text = "Claro. Basado en 'Introducción a la IA.pdf', los puntos clave son:\n\n1. Historia y evolución del aprendizaje automático.\n2. Modelos de redes neuronales profundas.\n3. Aplicaciones prácticas en procesamiento del lenguaje natural.",
-                isUser = false,
-                timestamp = "10:31 AM"
-            )
+            verticalArrangement = Arrangement.spacedBy(Dimens.space24 + Dimens.space2),
+        ) {
+            items(entries, key = { it.id }) { entry ->
+                when (entry) {
+                    ChatEntry.SampleQuestion -> UserMessageBubble(text = stringResource(R.string.chat_sample_question))
+                    ChatEntry.SampleAnswer -> SampleAnswer()
+                    is ChatEntry.UserQuestion -> UserMessageBubble(text = entry.text)
+                }
+            }
+        }
+
+        MessageComposer(
+            value = messageText,
+            onValueChange = { messageText = it },
+            onSend = {
+                if (messageText.isNotBlank()) {
+                    entries = entries + ChatEntry.UserQuestion(id = System.currentTimeMillis().toString(), text = messageText)
+                    messageText = ""
+                }
+            },
         )
     }
+}
 
-    var messages by remember { mutableStateOf(initialMessages) }
-
-    val quickPrompts = listOf(
-        "Resumir fuentes",
-        "Generar preguntas",
-        "Buscar términos clave",
-        "Explicar concepto"
-    )
-
-    Column(
-        modifier = modifier.fillMaxSize()
-    ) {
-        // Message List
-        LazyColumn(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth(),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            items(messages, key = { it.id }) { message ->
-                ChatMessageItem(message = message)
-            }
-        }
-
-        // Quick Suggestion Chips
-        LazyRow(
-            modifier = Modifier.fillMaxWidth(),
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(quickPrompts) { prompt ->
-                SuggestionChip(
-                    onClick = {
-                        messageText = prompt
-                    },
-                    label = { Text(prompt) },
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Default.AutoAwesome,
-                            contentDescription = null,
-                            modifier = Modifier.size(16.dp)
-                        )
-                    }
-                )
-            }
-        }
-
-        // Bottom Message Input
+@Composable
+private fun SampleAnswer(modifier: Modifier = Modifier) {
+    Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(Dimens.space16)) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
+            horizontalArrangement = Arrangement.spacedBy(Dimens.space8),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            OutlinedTextField(
-                value = messageText,
-                onValueChange = { messageText = it },
-                placeholder = { Text("Haz una pregunta...") },
-                shape = RoundedCornerShape(24.dp),
-                modifier = Modifier.weight(1f),
-                maxLines = 3
+            DmIconTile(icon = painterResource(R.drawable.ic_sparkles))
+            Text(
+                text = stringResource(R.string.app_name),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurface,
             )
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            IconButton(
-                onClick = {
-                    if (messageText.isNotBlank()) {
-                        val newMessage = ChatMessage(
-                            id = System.currentTimeMillis().toString(),
-                            text = messageText,
-                            isUser = true,
-                            timestamp = "Ahora"
-                        )
-                        messages = messages + newMessage
-                        messageText = ""
-                    }
-                },
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primary)
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.Send,
-                    contentDescription = "Enviar mensaje",
-                    tint = MaterialTheme.colorScheme.onPrimary
-                )
-            }
         }
+        CitedParagraph(body = stringResource(R.string.chat_sample_answer_intro))
+        Column(verticalArrangement = Arrangement.spacedBy(Dimens.space14)) {
+            CitedParagraph(
+                lead = stringResource(R.string.chat_sample_answer_lead),
+                body = stringResource(R.string.chat_sample_answer_body),
+                citationNumber = SAMPLE_CITATION,
+            )
+            CitedParagraph(
+                body = stringResource(R.string.chat_sample_answer_reason),
+                citationNumber = SAMPLE_CITATION,
+            )
+        }
+        CitationCard(
+            citationNumber = SAMPLE_CITATION,
+            documentTitle = stringResource(R.string.doc_annual_report),
+            location = stringResource(R.string.citation_page_section, SAMPLE_CITED_PAGE, stringResource(R.string.page_title)),
+            actionLabel = stringResource(R.string.citation_view_passage),
+            // Opening the cited passage is out of scope for this redesign.
+            onClick = {},
+        )
+        DmIconButton(
+            icon = painterResource(R.drawable.ic_copy),
+            contentDescription = stringResource(R.string.cd_copy_answer),
+            onClick = {},
+            style = DmIconButtonStyle.Outlined,
+        )
     }
 }
 
 @Composable
-fun ChatMessageItem(
-    message: ChatMessage,
-    modifier: Modifier = Modifier
+private fun MessageComposer(
+    value: String,
+    onValueChange: (String) -> Unit,
+    onSend: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = if (message.isUser) Arrangement.End else Arrangement.Start,
-        verticalAlignment = Alignment.Top
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.surface)
+            .hairlineEdge(DmEdge.Top)
+            .padding(start = Dimens.space16, end = Dimens.space16, top = Dimens.space12, bottom = Dimens.space10),
+        verticalArrangement = Arrangement.spacedBy(Dimens.space10),
     ) {
-        if (!message.isUser) {
-            Box(
-                modifier = Modifier
-                    .size(36.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primaryContainer),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Default.AutoAwesome,
-                    contentDescription = "Asistente IA",
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                    modifier = Modifier.size(20.dp)
+        DmPillField(
+            value = value,
+            onValueChange = onValueChange,
+            placeholder = stringResource(R.string.chat_input_placeholder),
+            style = DmPillFieldStyle.Recessed,
+            minHeight = Dimens.composerFieldHeight,
+            singleLine = false,
+            contentPadding = PaddingValues(start = Dimens.space16 + Dimens.space2, end = Dimens.space6),
+            modifier = Modifier.fillMaxWidth(),
+            trailing = {
+                DmIconButton(
+                    icon = painterResource(R.drawable.ic_arrow_up),
+                    contentDescription = stringResource(R.string.cd_send_question),
+                    onClick = onSend,
+                    style = DmIconButtonStyle.Filled,
+                    iconSize = Dimens.iconXl + Dimens.hairline,
                 )
-            }
-            Spacer(modifier = Modifier.width(8.dp))
-        }
-
-        Card(
-            colors = CardDefaults.cardColors(
-                containerColor = if (message.isUser) {
-                    MaterialTheme.colorScheme.primary
-                } else {
-                    MaterialTheme.colorScheme.surfaceVariant
-                }
-            ),
-            shape = RoundedCornerShape(
-                topStart = 16.dp,
-                topEnd = 16.dp,
-                bottomStart = if (message.isUser) 16.dp else 4.dp,
-                bottomEnd = if (message.isUser) 4.dp else 16.dp
-            ),
-            modifier = Modifier.fillMaxWidth(0.80f)
-        ) {
-            Column(
-                modifier = Modifier.padding(12.dp)
-            ) {
-                Text(
-                    text = message.text,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = if (message.isUser) {
-                        MaterialTheme.colorScheme.onPrimary
-                    } else {
-                        MaterialTheme.colorScheme.onSurfaceVariant
-                    }
-                )
-
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Text(
-                    text = message.timestamp,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = if (message.isUser) {
-                        MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f)
-                    } else {
-                        MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
-                    },
-                    modifier = Modifier.align(Alignment.End)
-                )
-            }
-        }
-
-        if (message.isUser) {
-            Spacer(modifier = Modifier.width(8.dp))
-            Box(
-                modifier = Modifier
-                    .size(36.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.secondaryContainer),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Person,
-                    contentDescription = "Usuario",
-                    tint = MaterialTheme.colorScheme.onSecondaryContainer,
-                    modifier = Modifier.size(20.dp)
-                )
-            }
-        }
+            },
+        )
+        Text(
+            text = stringResource(R.string.chat_disclaimer),
+            style = DocuMindTheme.typography.fine,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth(),
+        )
     }
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
-fun ChatTabPreview() {
+private fun ChatTabPreview() {
     ChatbotTheme {
-        ChatTab()
+        ChatTab(modifier = Modifier.background(MaterialTheme.colorScheme.background))
     }
 }

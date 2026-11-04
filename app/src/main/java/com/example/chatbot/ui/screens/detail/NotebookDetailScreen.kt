@@ -1,111 +1,92 @@
 package com.example.chatbot.ui.screens.detail
 
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.Chat
-import androidx.compose.material.icons.filled.Description
-import androidx.compose.material.icons.filled.Psychology
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.material.icons.automirrored.filled.Chat
+import com.example.chatbot.R
+import com.example.chatbot.ui.components.DocumentTabBar
+import com.example.chatbot.ui.components.DocumentTabItem
+import com.example.chatbot.ui.components.DocumentTopBar
 import com.example.chatbot.ui.theme.ChatbotTheme
 
-enum class DetailTab(
-    val title: String,
-    val icon: ImageVector
-) {
-    FUENTES("Fuentes", Icons.Default.Description),
-    CHAT("Chat", Icons.AutoMirrored.Filled.Chat),
-    LAB("Lab", Icons.Default.Psychology)
+/** Tabs of the document detail, in display order. */
+enum class DetailTab(@StringRes val label: Int, @DrawableRes val icon: Int) {
+    CHAT(R.string.tab_chat, R.drawable.ic_message_circle),
+    DOCUMENT(R.string.tab_document, R.drawable.ic_file_text),
+    LAB(R.string.tab_lab, R.drawable.ic_flask_round),
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+// Sample document length shown in the header (no real documents yet).
+private const val SAMPLE_PAGE_COUNT = 24
+
 @Composable
 fun NotebookDetailScreen(
     notebookTitle: String,
     onBackClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
-    var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
-    val tabs = DetailTab.entries
+    var selectedTab by rememberSaveable { mutableStateOf(DetailTab.CHAT) }
+    val pages = pluralStringResource(R.plurals.pages_count, SAMPLE_PAGE_COUNT, SAMPLE_PAGE_COUNT)
+    val separator = stringResource(R.string.meta_separator)
+    val subtitle = when (selectedTab) {
+        DetailTab.DOCUMENT -> stringResource(R.string.detail_pdf_reader) + separator + pages
+        else -> pages + separator + stringResource(R.string.detail_ready_to_chat)
+    }
+    val tabs = DetailTab.entries.map { DocumentTabItem(stringResource(it.label), painterResource(it.icon)) }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = notebookTitle,
-                        fontWeight = FontWeight.Bold
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Volver"
-                        )
-                    }
-                }
+            DocumentTopBar(
+                title = notebookTitle,
+                subtitle = subtitle,
+                onBackClick = onBackClick,
+                onMoreClick = {},
             )
         },
         bottomBar = {
-            NavigationBar {
-                tabs.forEachIndexed { index, tab ->
-                    NavigationBarItem(
-                        selected = selectedTabIndex == index,
-                        onClick = { selectedTabIndex = index },
-                        icon = {
-                            Icon(
-                                imageVector = tab.icon,
-                                contentDescription = tab.title
-                            )
-                        },
-                        label = { Text(tab.title) }
-                    )
-                }
-            }
-        }
-    ) { paddingValues ->
+            DocumentTabBar(
+                tabs = tabs,
+                selectedIndex = selectedTab.ordinal,
+                onTabSelected = { selectedTab = DetailTab.entries[it] },
+            )
+        },
+    ) { innerPadding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .padding(innerPadding)
+                .consumeWindowInsets(innerPadding),
         ) {
-            when (selectedTabIndex) {
-                0 -> FuentesTab()
-                1 -> ChatTab()
-                2 -> LabTab()
+            when (selectedTab) {
+                DetailTab.CHAT -> ChatTab()
+                DetailTab.DOCUMENT -> DocumentReaderTab()
+                DetailTab.LAB -> LabTab()
             }
         }
     }
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
-fun NotebookDetailScreenPreview() {
+private fun NotebookDetailScreenPreview() {
     ChatbotTheme {
-        NotebookDetailScreen(
-            notebookTitle = "Mi Cuaderno de Pruebas",
-            onBackClick = {}
-        )
+        NotebookDetailScreen(notebookTitle = "Annual Report 2024", onBackClick = {})
     }
 }

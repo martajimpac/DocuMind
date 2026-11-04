@@ -1,58 +1,74 @@
 package com.example.chatbot.ui.theme
 
-import android.app.Activity
-import android.os.Build
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.graphics.Color
 
-private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+// Fixed light palette: the design has no dark variant and must not follow the wallpaper (CA-01, CA-12).
+private val DocuMindColorScheme = lightColorScheme(
+    primary = Violet,
+    onPrimary = White,
+    primaryContainer = VioletTint,
+    onPrimaryContainer = Violet,
+    secondary = Violet,
+    onSecondary = White,
+    secondaryContainer = VioletTint,
+    onSecondaryContainer = Violet,
+    background = Cream,
+    onBackground = Ink,
+    surface = White,
+    onSurface = Ink,
+    surfaceVariant = Cream,
+    onSurfaceVariant = Muted,
+    surfaceContainer = White,
+    surfaceContainerLow = White,
+    surfaceContainerHigh = White,
+    surfaceContainerHighest = Cream,
+    outline = Hairline,
+    outlineVariant = Hairline,
+    error = Danger,
+    onError = White,
 )
 
-private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
-
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+/** Colors with no Material 3 slot. */
+@Immutable
+data class DocuMindColors(
+    val success: Color = Success,
+    val sheetHandle: Color = Handle,
+    val shadow: Color = ShadowTint,
 )
+
+private val LocalDocuMindColors = staticCompositionLocalOf { DocuMindColors() }
+private val LocalDocuMindTypography = staticCompositionLocalOf { DocuMindTypography() }
+private val LocalDocuMindShapes = staticCompositionLocalOf { DocuMindShapes() }
+
+/** Access to the design tokens that Material 3 does not cover. */
+object DocuMindTheme {
+    val colors: DocuMindColors
+        @Composable @ReadOnlyComposable get() = LocalDocuMindColors.current
+    val typography: DocuMindTypography
+        @Composable @ReadOnlyComposable get() = LocalDocuMindTypography.current
+    val shapes: DocuMindShapes
+        @Composable @ReadOnlyComposable get() = LocalDocuMindShapes.current
+}
 
 @Composable
-fun ChatbotTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
-    content: @Composable () -> Unit
-) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
-
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
+fun ChatbotTheme(content: @Composable () -> Unit) {
+    CompositionLocalProvider(
+        LocalDocuMindColors provides DocuMindColors(),
+        LocalDocuMindTypography provides DocuMindTypography(),
+        LocalDocuMindShapes provides DocuMindShapes(),
+    ) {
+        MaterialTheme(
+            colorScheme = DocuMindColorScheme,
+            typography = Typography,
+            shapes = Shapes,
+            content = content,
+        )
     }
-
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
-    )
 }

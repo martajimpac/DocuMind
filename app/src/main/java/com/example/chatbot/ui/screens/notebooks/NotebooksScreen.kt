@@ -1,389 +1,227 @@
 package com.example.chatbot.ui.screens.notebooks
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Book
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import com.example.chatbot.R
+import com.example.chatbot.ui.components.BrandLockup
+import com.example.chatbot.ui.components.DmAvatar
+import com.example.chatbot.ui.components.DmElevation
+import com.example.chatbot.ui.components.DmInlineAction
+import com.example.chatbot.ui.components.DmPillField
+import com.example.chatbot.ui.components.DmPrimaryButton
+import com.example.chatbot.ui.components.DmSurfaceCard
+import com.example.chatbot.ui.components.DocumentListItem
+import com.example.chatbot.ui.components.SectionHeader
+import com.example.chatbot.ui.components.SystemBarsProtection
 import com.example.chatbot.ui.theme.ChatbotTheme
+import com.example.chatbot.ui.theme.Dimens
+import com.example.chatbot.ui.theme.DocuMindTheme
 
-data class NotebookItem(
+/** Sample document shown in the library (no real data yet). */
+data class LibraryDocument(
     val id: String,
-    val title: String,
-    val sourcesCount: Int,
-    val date: String,
-    val color: Color
+    @StringRes val title: Int,
+    @StringRes val coverTitle: Int,
+    val sourceCount: Int,
+    @StringRes val size: Int,
+    @StringRes val lastActivity: Int,
+    @StringRes val status: Int? = null,
 )
 
-@OptIn(ExperimentalMaterial3Api::class)
+private val sampleDocuments = listOf(
+    LibraryDocument("annual-report", R.string.doc_annual_report, R.string.cover_annual_report, 24, R.string.doc_annual_report_size, R.string.library_opened_just_now, R.string.library_continue),
+    LibraryDocument("brand-guidelines", R.string.doc_brand_guidelines, R.string.cover_brand_guidelines, 18, R.string.doc_brand_guidelines_size, R.string.library_added_yesterday),
+    LibraryDocument("research-summary", R.string.doc_research_summary, R.string.cover_research_summary, 12, R.string.doc_research_summary_size, R.string.library_added_oct_24),
+)
+
 @Composable
 fun NotebooksScreen(
     onNavigateToDetail: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onSignOut: () -> Unit = {},
 ) {
-    var searchQuery by remember { mutableStateOf("") }
-
-    val sampleNotebooks = remember {
-        listOf(
-            NotebookItem("1", "Inteligencia Artificial", 5, "Hace 2 horas", Color(0xFF673AB7)),
-            NotebookItem("2", "Desarrollo Android Kotlin", 12, "Ayer", Color(0xFF009688)),
-            NotebookItem("3", "Apuntes de Historia", 3, "Hace 3 días", Color(0xFFFF9800)),
-            NotebookItem("4", "Recetas y Cocina", 8, "Hace 1 semana", Color(0xFFE91E63))
-        )
-    }
+    var searchQuery by rememberSaveable { mutableStateOf("") }
+    val newNotebookTitle = stringResource(R.string.notebook_default_title)
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = "Mis Cuadernos",
-                        fontWeight = FontWeight.Bold
-                    )
-                },
-                actions = {
-                    IconButton(onClick = { }) {
-                        Icon(
-                            imageVector = Icons.Default.Person,
-                            contentDescription = "Perfil"
-                        )
-                    }
-                }
-            )
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { onNavigateToDetail("Nuevo Cuaderno") },
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Crear cuaderno"
-                )
-            }
-        }
-    ) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
-            contentPadding = PaddingValues(bottom = 80.dp)
-        ) {
-            // Search Bar
-            item {
-                OutlinedTextField(
-                    value = searchQuery,
-                    onValueChange = { searchQuery = it },
-                    placeholder = { Text("Buscar cuadernos...") },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Search,
-                            contentDescription = null
-                        )
-                    },
-                    shape = RoundedCornerShape(16.dp),
-                    singleLine = true,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
-                )
-            }
-
-            // LazyRow Section Header
-            item {
-                Text(
-                    text = "Cuadernos Destacados",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 12.dp)
-                )
-            }
-
-            // LazyRow with Notebook Cards + Create Card
-            item {
-                LazyRow(
-                    contentPadding = PaddingValues(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    // "Crear cuaderno" Card directly in the LazyRow
-                    item {
-                        CreateNotebookCard(
-                            onClick = { onNavigateToDetail("Nuevo Cuaderno") }
-                        )
-                    }
-
-                    // Existing Notebook items
-                    items(sampleNotebooks, key = { it.id }) { notebook ->
-                        NotebookCard(
-                            notebook = notebook,
-                            onClick = { onNavigateToDetail(notebook.title) }
-                        )
-                    }
-                }
-            }
-
-            // All Notebooks Section Header
-            item {
-                Text(
-                    text = "Todos los Cuadernos",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(start = 16.dp, top = 24.dp, bottom = 12.dp)
-                )
-            }
-
-            // Vertical list of notebooks
-            items(sampleNotebooks, key = { "list_${it.id}" }) { notebook ->
-                NotebookRowItem(
-                    notebook = notebook,
-                    onClick = { onNavigateToDetail(notebook.title) }
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun CreateNotebookCard(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Card(
-        onClick = onClick,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f)
-        ),
-        shape = RoundedCornerShape(20.dp),
-        modifier = modifier
-            .width(160.dp)
-            .height(200.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Box(
+        containerColor = MaterialTheme.colorScheme.background,
+    ) { innerPadding ->
+        Box(modifier = Modifier.fillMaxSize()) {
+            Column(
                 modifier = Modifier
-                    .size(56.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primary),
-                contentAlignment = Alignment.Center
+                    .fillMaxSize()
+                    .consumeWindowInsets(innerPadding)
+                    .imePadding()
+                    .verticalScroll(rememberScrollState())
+                    .padding(innerPadding),
             ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Crear cuaderno",
-                    tint = MaterialTheme.colorScheme.onPrimary,
-                    modifier = Modifier.size(32.dp)
-                )
+                LibraryHeader(onSignOut = onSignOut)
+                Column(
+                    modifier = Modifier.padding(start = Dimens.screenPadding, end = Dimens.screenPadding, bottom = Dimens.screenPadding),
+                    verticalArrangement = Arrangement.spacedBy(Dimens.space16),
+                ) {
+                    Column(verticalArrangement = Arrangement.spacedBy(Dimens.space6)) {
+                        Text(
+                            text = stringResource(R.string.library_title),
+                            style = MaterialTheme.typography.headlineMedium,
+                            color = MaterialTheme.colorScheme.onBackground,
+                        )
+                        Text(
+                            text = stringResource(R.string.library_subtitle),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                    DmSurfaceCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = MaterialTheme.shapes.large,
+                        elevation = DmElevation.High,
+                        verticalArrangement = Arrangement.spacedBy(Dimens.space14),
+                    ) {
+                        Text(
+                            text = stringResource(R.string.library_create_notebook),
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onSurface,
+                        )
+                        DmPrimaryButton(
+                            text = stringResource(R.string.library_start),
+                            onClick = { onNavigateToDetail(newNotebookTitle) },
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                    }
+                    DmPillField(
+                        value = searchQuery,
+                        onValueChange = { searchQuery = it },
+                        placeholder = stringResource(R.string.library_search_placeholder),
+                        leadingIcon = painterResource(R.drawable.ic_search),
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                    Column(verticalArrangement = Arrangement.spacedBy(Dimens.space12)) {
+                        SectionHeader(title = stringResource(R.string.library_recent), count = sampleDocuments.size) {
+                            DmInlineAction(
+                                text = stringResource(R.string.library_sort_last_opened),
+                                icon = painterResource(R.drawable.ic_arrow_down),
+                                onClick = {},
+                            )
+                        }
+                        sampleDocuments.forEach { document ->
+                            val title = stringResource(document.title)
+                            DocumentListItem(
+                                title = title,
+                                coverTitle = stringResource(document.coverTitle),
+                                metadata = listOf(
+                                    pluralStringResource(R.plurals.sources_count, document.sourceCount, document.sourceCount),
+                                    stringResource(document.size),
+                                    stringResource(document.lastActivity),
+                                ).joinToString(stringResource(R.string.meta_separator)),
+                                activity = document.status?.let { stringResource(it) },
+                                onClick = { onNavigateToDetail(title) },
+                            )
+                        }
+                    }
+                    PrivacyNote()
+                }
             }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text(
-                text = "Nuevo Cuaderno",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onPrimaryContainer
-            )
+            SystemBarsProtection()
         }
     }
 }
 
 @Composable
-fun NotebookCard(
-    notebook: NotebookItem,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Card(
-        onClick = onClick,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
-        ),
-        shape = RoundedCornerShape(20.dp),
-        modifier = modifier
-            .width(160.dp)
-            .height(200.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape)
-                        .background(notebook.color.copy(alpha = 0.2f)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Book,
-                        contentDescription = null,
-                        tint = notebook.color,
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-
-                IconButton(
-                    onClick = { },
-                    modifier = Modifier.size(24.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.MoreVert,
-                        contentDescription = "Opciones"
-                    )
-                }
-            }
-
-            Column {
-                Text(
-                    text = notebook.title,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Text(
-                    text = "${notebook.sourcesCount} fuentes",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-
-                Text(
-                    text = notebook.date,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun NotebookRowItem(
-    notebook: NotebookItem,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Card(
-        onClick = onClick,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        ),
-        shape = RoundedCornerShape(12.dp),
+private fun LibraryHeader(onSignOut: () -> Unit, modifier: Modifier = Modifier) {
+    var isAccountMenuOpen by rememberSaveable { mutableStateOf(false) }
+    Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 4.dp)
+            .heightIn(min = Dimens.libraryBarHeight)
+            .padding(start = Dimens.screenPadding, end = Dimens.screenPadding - Dimens.space4),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(12.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(44.dp)
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(notebook.color.copy(alpha = 0.2f)),
-                contentAlignment = Alignment.Center
+        BrandLockup(modifier = Modifier.weight(1f))
+        Box {
+            DmAvatar(
+                initials = stringResource(R.string.account_initials),
+                contentDescription = stringResource(R.string.cd_account),
+                onClick = { isAccountMenuOpen = true },
+            )
+            DropdownMenu(
+                expanded = isAccountMenuOpen,
+                onDismissRequest = { isAccountMenuOpen = false },
+                containerColor = MaterialTheme.colorScheme.surface,
             ) {
-                Icon(
-                    imageVector = Icons.Default.Book,
-                    contentDescription = null,
-                    tint = notebook.color
-                )
-            }
-
-            Spacer(modifier = Modifier.width(16.dp))
-
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
-                Text(
-                    text = notebook.title,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold
-                )
-                Text(
-                    text = "${notebook.sourcesCount} fuentes • ${notebook.date}",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-
-            IconButton(onClick = { }) {
-                Icon(
-                    imageVector = Icons.Default.MoreVert,
-                    contentDescription = "Opciones"
+                DropdownMenuItem(
+                    text = {
+                        Text(
+                            text = stringResource(R.string.account_sign_out),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurface,
+                        )
+                    },
+                    onClick = {
+                        isAccountMenuOpen = false
+                        onSignOut()
+                    },
                 )
             }
         }
     }
 }
 
-@Preview(showBackground = true)
 @Composable
-fun NotebooksScreenPreview() {
+private fun PrivacyNote(modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(Dimens.space6, Alignment.CenterHorizontally),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(
+            painter = painterResource(R.drawable.ic_lock_keyhole),
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.size(Dimens.iconXs),
+        )
+        Text(
+            text = stringResource(R.string.library_privacy),
+            style = DocuMindTheme.typography.meta,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun NotebooksScreenPreview() {
     ChatbotTheme {
         NotebooksScreen(onNavigateToDetail = {})
     }

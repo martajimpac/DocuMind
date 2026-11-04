@@ -1,162 +1,103 @@
 package com.example.chatbot.ui.screens.detail
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AutoAwesome
-import androidx.compose.material.icons.filled.GraphicEq
-import androidx.compose.material.icons.filled.HelpOutline
-import androidx.compose.material.icons.filled.Lightbulb
-import androidx.compose.material.icons.filled.Psychology
-import androidx.compose.material.icons.filled.Quiz
-import androidx.compose.material.icons.filled.Style
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
+import androidx.compose.material.icons.automirrored.outlined.HelpOutline
+import androidx.compose.material.icons.outlined.GraphicEq
+import androidx.compose.material.icons.outlined.Lightbulb
+import androidx.compose.material.icons.outlined.Psychology
+import androidx.compose.material.icons.outlined.Quiz
+import androidx.compose.material.icons.outlined.Style
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import com.example.chatbot.R
+import com.example.chatbot.ui.components.DmIconTile
+import com.example.chatbot.ui.components.DmIconTileStyle
+import com.example.chatbot.ui.components.DmPrimaryButton
+import com.example.chatbot.ui.components.DmSurfaceCard
+import com.example.chatbot.ui.components.SectionHeader
 import com.example.chatbot.ui.theme.ChatbotTheme
+import com.example.chatbot.ui.theme.Dimens
+import com.example.chatbot.ui.theme.DocuMindTheme
 
 data class LabTool(
     val id: String,
-    val title: String,
-    val description: String,
+    @StringRes val title: Int,
+    @StringRes val description: Int,
     val icon: ImageVector,
-    val color: Color
 )
 
-@Composable
-fun LabTab(
-    modifier: Modifier = Modifier
-) {
-    val labTools = listOf(
-        LabTool(
-            id = "1",
-            title = "Guía de Estudio",
-            description = "Crea un resumen estructurado con temas principales y secundarios.",
-            icon = Icons.Default.Psychology,
-            color = Color(0xFF3F51B5)
-        ),
-        LabTool(
-            id = "2",
-            title = "Tarjetas Flash",
-            description = "Genera tarjetas de preguntas y respuestas para repasar.",
-            icon = Icons.Default.Style,
-            color = Color(0xFF009688)
-        ),
-        LabTool(
-            id = "3",
-            title = "Cuestionario Quiz",
-            description = "Ponte a prueba con un test interactivo sobre tus fuentes.",
-            icon = Icons.Default.Quiz,
-            color = Color(0xFFFF9800)
-        ),
-        LabTool(
-            id = "4",
-            title = "Resumen de Audio",
-            description = "Genera un resumen en formato podcast o conversación de voz.",
-            icon = Icons.Default.GraphicEq,
-            color = Color(0xFFE91E63)
-        ),
-        LabTool(
-            id = "5",
-            title = "Ideas Clave",
-            description = "Extrae los puntos más relevantes y preguntas frecuentes.",
-            icon = Icons.Default.Lightbulb,
-            color = Color(0xFF9C27B0)
-        ),
-        LabTool(
-            id = "6",
-            title = "Preguntas Frecuentes",
-            description = "Consulta las dudas más comunes resueltas por la IA.",
-            icon = Icons.Default.HelpOutline,
-            color = Color(0xFF2196F3)
-        )
-    )
+private val labTools = listOf(
+    LabTool("study-guide", R.string.lab_study_guide, R.string.lab_study_guide_body, Icons.Outlined.Psychology),
+    LabTool("flashcards", R.string.lab_flashcards, R.string.lab_flashcards_body, Icons.Outlined.Style),
+    LabTool("quiz", R.string.lab_quiz, R.string.lab_quiz_body, Icons.Outlined.Quiz),
+    LabTool("audio-summary", R.string.lab_audio_summary, R.string.lab_audio_summary_body, Icons.Outlined.GraphicEq),
+    LabTool("key-ideas", R.string.lab_key_ideas, R.string.lab_key_ideas_body, Icons.Outlined.Lightbulb),
+    LabTool("faq", R.string.lab_faq, R.string.lab_faq_body, Icons.AutoMirrored.Outlined.HelpOutline),
+)
 
+private const val TWO_LINES = 2
+
+@Composable
+fun LabTab(modifier: Modifier = Modifier) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        contentPadding = PaddingValues(Dimens.space16),
+        horizontalArrangement = Arrangement.spacedBy(Dimens.space12),
+        verticalArrangement = Arrangement.spacedBy(Dimens.space12),
     ) {
-        // Banner Header
-        item(span = { GridItemSpan(2) }) {
-            Card(
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.tertiaryContainer
-                ),
-                shape = RoundedCornerShape(16.dp),
-                modifier = Modifier.fillMaxWidth()
+        item(span = { GridItemSpan(maxLineSpan) }, key = "banner") {
+            DmSurfaceCard(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(Dimens.space8),
             ) {
-                Column(
-                    modifier = Modifier.padding(16.dp)
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(Dimens.space8),
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.AutoAwesome,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onTertiaryContainer
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "Laboratorio de Estudio",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onTertiaryContainer
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(6.dp))
+                    DmIconTile(icon = painterResource(R.drawable.ic_sparkles))
                     Text(
-                        text = "Transforma la información de tus fuentes en herramientas de aprendizaje e investigación interactivas.",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onTertiaryContainer.copy(alpha = 0.8f)
+                        text = stringResource(R.string.lab_banner_title),
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
                 }
+                Text(
+                    text = stringResource(R.string.lab_banner_body),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
             }
         }
 
-        // Section Title
-        item(span = { GridItemSpan(2) }) {
-            Text(
-                text = "Herramientas Disponibles",
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(top = 8.dp)
+        item(span = { GridItemSpan(maxLineSpan) }, key = "title") {
+            SectionHeader(
+                title = stringResource(R.string.lab_tools_title),
+                modifier = Modifier.padding(top = Dimens.space8),
             )
         }
 
-        // Tools Grid
         items(labTools, key = { it.id }) { tool ->
             LabToolCard(tool = tool)
         }
@@ -164,78 +105,50 @@ fun LabTab(
 }
 
 @Composable
-fun LabToolCard(
+private fun LabToolCard(
     tool: LabTool,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
-    Card(
-        onClick = { },
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
-        ),
-        shape = RoundedCornerShape(16.dp),
-        modifier = modifier.height(180.dp)
+    DmSurfaceCard(
+        modifier = modifier.fillMaxWidth(),
+        contentPadding = PaddingValues(Dimens.space14),
+        verticalArrangement = Arrangement.spacedBy(Dimens.space10),
+        onClick = {},
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(14.dp),
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
-                    .background(tool.color.copy(alpha = 0.2f)),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = tool.icon,
-                    contentDescription = null,
-                    tint = tool.color,
-                    modifier = Modifier.size(24.dp)
-                )
-            }
-
-            Column {
-                Text(
-                    text = tool.title,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Text(
-                    text = tool.description,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
-                    maxLines = 2
-                )
-            }
-
-            Button(
-                onClick = { },
-                shape = RoundedCornerShape(8.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(32.dp),
-                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp)
-            ) {
-                Text(
-                    text = "Generar",
-                    style = MaterialTheme.typography.labelMedium
-                )
-            }
-        }
+        DmIconTile(
+            icon = rememberVectorPainter(tool.icon),
+            size = Dimens.toolTile,
+            iconSize = Dimens.iconXl,
+            style = DmIconTileStyle.Soft,
+            shape = DocuMindTheme.shapes.pill,
+        )
+        Text(
+            text = stringResource(tool.title),
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurface,
+            maxLines = TWO_LINES,
+            overflow = TextOverflow.Ellipsis,
+        )
+        Text(
+            text = stringResource(tool.description),
+            style = DocuMindTheme.typography.caption,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            minLines = TWO_LINES,
+            maxLines = TWO_LINES,
+            overflow = TextOverflow.Ellipsis,
+        )
+        DmPrimaryButton(
+            text = stringResource(R.string.lab_generate),
+            onClick = {},
+            modifier = Modifier.fillMaxWidth(),
+        )
     }
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
-fun LabTabPreview() {
+private fun LabTabPreview() {
     ChatbotTheme {
-        LabTab()
+        LabTab(modifier = Modifier.background(MaterialTheme.colorScheme.background))
     }
 }

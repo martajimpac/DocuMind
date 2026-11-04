@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Icon "flask-round" exported from the DocuMind Figma file. Tinted at the call site. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="16dp"
+    android:height="16dp"
+    android:viewportWidth="16"
+    android:viewportHeight="16">
+    <path
+        android:pathData="M9.33348 1.3328V5.52776C10.4078 5.84805 11.331 6.54433 11.9341 7.48928C12.5373 8.43423 12.7801 9.5647 12.6183 10.674C12.4564 11.7833 11.9007 12.7972 11.0527 13.5305C10.2047 14.2637 9.12107 14.6672 8 14.6672C6.87893 14.6672 5.79531 14.2637 4.9473 13.5305C4.09929 12.7972 3.54355 11.7833 3.38171 10.674C3.34897 10.4496 3.33279 10.2244 3.3328 10.0001C3.33282 9.11504 3.5847 8.24312 4.06587 7.48928C4.66903 6.54433 5.59218 5.84805 6.66652 5.52776V1.3328M6.66652 1.3328H5.66639M6.66652 1.3328H9.33348M3.3328 10.0001H12.6672M9.33348 1.3328H10.3336"
+        android:strokeWidth="2"
+        android:strokeColor="#FF000000"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000" />
+</vector>

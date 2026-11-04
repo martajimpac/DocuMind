@@ -1,3 +1,157 @@
 <resources>
-    <string name="app_name">Chatbot</string>
+    <!-- Brand: never translated (RF-11). -->
+    <string name="app_name" translatable="false">DocuMind</string>
+    <string name="account_initials" translatable="false">AL</string>
+
+    <!-- Shared -->
+    <string name="cd_back">Back</string>
+    <string name="cd_more_options">More options</string>
+    <string name="cd_account">Account</string>
+    <string name="cd_close">Close</string>
+    <string name="meta_separator" translatable="false">" · "</string>
+    <string name="citation_marker" translatable="false">[%1$d]</string>
+    <plurals name="sources_count">
+        <item quantity="one">%d source</item>
+        <item quantity="other">%d sources</item>
+    </plurals>
+    <plurals name="pages_count">
+        <item quantity="one">%d page</item>
+        <item quantity="other">%d pages</item>
+    </plurals>
+
+    <!-- Library -->
+    <string name="library_title">Your library</string>
+    <string name="library_subtitle">Your documents. A little more understood.</string>
+    <string name="library_create_notebook">Create new notebook</string>
+    <string name="library_start">Start</string>
+    <string name="library_search_placeholder">Search your documents</string>
+    <string name="library_recent">Recent notebooks</string>
+    <string name="library_sort_last_opened">Last opened</string>
+    <string name="library_privacy">Private documents. Only you have access.</string>
+    <string name="library_continue">Continue your conversation</string>
+    <string name="library_opened_just_now">Opened just now</string>
+    <string name="library_added_yesterday">Added yesterday</string>
+    <string name="library_added_oct_24">Added Oct 24</string>
+    <string name="cover_label" translatable="false">PDF</string>
+
+    <!-- Sample documents -->
+    <string name="doc_annual_report">Annual Report 2024</string>
+    <string name="doc_brand_guidelines">Brand Guidelines</string>
+    <string name="doc_research_summary">Research Summary</string>
+    <string name="doc_annual_report_size">2.4 MB</string>
+    <string name="doc_brand_guidelines_size">1.8 MB</string>
+    <string name="doc_research_summary_size">940 KB</string>
+    <string name="cover_annual_report" translatable="false">N / 24</string>
+    <string name="cover_brand_guidelines">STUDIO</string>
+    <string name="cover_research_summary">NOTES</string>
+    <string name="notebook_default_title">New notebook</string>
+
+    <!-- Document detail -->
+    <string name="detail_ready_to_chat">Ready to chat</string>
+    <string name="detail_pdf_reader">PDF reader</string>
+    <string name="tab_chat">Chat</string>
+    <string name="tab_document">Document</string>
+    <string name="tab_lab">Lab</string>
+
+    <!-- Chat -->
+    <string name="chat_sample_question">What drove revenue growth in 2024?</string>
+    <string name="chat_sample_answer_intro">Revenue reached $12.8 million in 2024, up 18% year over year.</string>
+    <string name="chat_sample_answer_lead">Enterprise customers led growth.</string>
+    <string name="chat_sample_answer_body">They contributed 62% of revenue, compared with 54% in 2023.</string>
+    <string name="chat_sample_answer_reason">The report attributes the increase to new enterprise contracts and expanded use by existing customers.</string>
+    <string name="chat_input_placeholder">Ask about this document…</string>
+    <string name="chat_disclaimer">AI can make mistakes. Check the original source.</string>
+    <string name="cd_send_question">Send question</string>
+    <string name="cd_copy_answer">Copy answer</string>
+    <string name="citation_page_section">Page %1$d · %2$s</string>
+    <string name="citation_view_passage">View highlighted passage</string>
+
+    <!-- Document reader (sample PDF page) -->
+    <string name="page_brand" translatable="false">NORTHSTAR</string>
+    <string name="page_publication">ANNUAL REPORT 2024</string>
+    <string name="page_section">03 / FINANCIAL REVIEW</string>
+    <string name="page_title">Financial performance</string>
+    <string name="page_intro">A year of sustained progress, supported by deeper customer relationships and a growing enterprise business.</string>
+    <string name="page_revenue_heading">Revenue growth</string>
+    <string name="page_passage">Revenue reached $12.8 million in 2024, an increase of 18% year over year. Enterprise customers accounted for 62% of total revenue, up from 54% in 2023. Growth was driven by new enterprise contracts and expanded use by existing customers.</string>
+    <string name="page_table_title">Revenue mix</string>
+    <string name="page_table_enterprise">Enterprise</string>
+    <string name="page_table_other">Other customers</string>
+    <string name="page_footer">Northstar · Annual Report 2024</string>
+    <string name="reader_page_total">" / %1$d"</string>
+    <string name="reader_zoom_level" translatable="false">100%</string>
+    <string name="cd_previous_page">Previous page</string>
+    <string name="cd_next_page">Next page</string>
+    <string name="cd_zoom">Zoom</string>
+    <string name="cd_page_of">Page %1$d of %2$d</string>
+
+    <!-- Citation source sheet -->
+    <string name="sheet_title">Original source</string>
+    <string name="sheet_document_meta">Northstar · Page %1$d of %2$d</string>
+    <string name="sheet_view_original">View original page</string>
+
+    <!-- Login -->
+    <string name="login_tagline">Your intelligent notebook assistant</string>
+    <string name="login_email">Email</string>
+    <string name="login_password">Password</string>
+    <string name="login_show_password">Show password</string>
+    <string name="login_hide_password">Hide password</string>
+    <string name="login_forgot_password">Forgot your password?</string>
+    <string name="login_submit">Sign in</string>
+    <string name="login_register">Don\'t have an account? Sign up here</string>
+    <string name="register_subtitle">Create your account</string>
+    <string name="register_confirm_password">Repeat password</string>
+    <string name="register_submit">Create account</string>
+    <string name="register_have_account">Already have an account? Sign in</string>
+    <string name="register_email_sent_title">Check your email</string>
+    <string name="register_email_sent_body">We sent a link to %1$s. Open it to confirm your account, then sign in.</string>
+    <string name="register_email_sent_ok">OK</string>
+    <string name="forgot_subtitle">We will email you a link to choose a new password</string>
+    <string name="forgot_submit">Send link</string>
+    <string name="forgot_back_to_login">Back to sign in</string>
+    <string name="forgot_sent_title">Check your email</string>
+    <string name="forgot_sent_body">If an account exists for that email, we sent you a link to reset your password.</string>
+    <string name="forgot_sent_ok">OK</string>
+    <string name="reset_subtitle">Choose a new password</string>
+    <string name="reset_new_password">New password</string>
+    <string name="reset_submit">Save password</string>
+    <string name="reset_verifying">Checking your link…</string>
+    <string name="reset_invalid_link">This link is not valid or has expired.</string>
+    <string name="reset_request_new_link">Request a new link</string>
+    <string name="reset_retry">Try again</string>
+    <string name="auth_error_email_required">Enter your email</string>
+    <string name="auth_error_email_invalid">Enter a valid email</string>
+    <string name="auth_error_password_required">Enter your password</string>
+    <plurals name="auth_error_password_too_short">
+        <item quantity="one">Use at least %1$d character</item>
+        <item quantity="other">Use at least %1$d characters</item>
+    </plurals>
+    <string name="auth_error_passwords_mismatch">Passwords don\'t match</string>
+    <string name="auth_error_invalid_credentials">Incorrect email or password</string>
+    <string name="auth_error_email_not_confirmed">Confirm your email first. Check your inbox for the link.</string>
+    <string name="auth_error_weak_password">This password is too weak. Try a longer one.</string>
+    <string name="auth_error_network">No connection. Check your network and try again.</string>
+    <string name="auth_error_invalid_link">This link is not valid or has expired.</string>
+    <string name="auth_error_same_password">Use a password different from the current one</string>
+    <string name="auth_error_rate_limited">Too many attempts. Wait a few minutes and try again.</string>
+    <string name="auth_error_unknown">Something went wrong. Try again.</string>
+    <string name="account_sign_out">Sign out</string>
+
+    <!-- Lab -->
+    <string name="lab_banner_title">Study lab</string>
+    <string name="lab_banner_body">Turn the information in your sources into interactive learning and research tools.</string>
+    <string name="lab_tools_title">Available tools</string>
+    <string name="lab_generate">Generate</string>
+    <string name="lab_study_guide">Study guide</string>
+    <string name="lab_study_guide_body">Create a structured summary with main and secondary topics.</string>
+    <string name="lab_flashcards">Flashcards</string>
+    <string name="lab_flashcards_body">Generate question and answer cards to review.</string>
+    <string name="lab_quiz">Quiz</string>
+    <string name="lab_quiz_body">Test yourself with an interactive quiz about your sources.</string>
+    <string name="lab_audio_summary">Audio summary</string>
+    <string name="lab_audio_summary_body">Generate a summary as a podcast or voice conversation.</string>
+    <string name="lab_key_ideas">Key ideas</string>
+    <string name="lab_key_ideas_body">Extract the most relevant points and frequent questions.</string>
+    <string name="lab_faq">Frequently asked questions</string>
+    <string name="lab_faq_body">See the most common questions answered by the AI.</string>
 </resources>
