@@ -11,7 +11,7 @@ Estados: Pendiente · En curso · Hecha · Bloqueada
 | T3 | Navegación, DI y entrada Android | `Routes.kt`, `ResetLink.kt`, `AppNavigation.kt`, `App.kt`, `AppModule.kt` (`initKoin`), `MainActivity`, `DocuMindApplication`, `MainViewController` (iOS) | T2 | RF-01, RF-03, RF-04 | `:app:assembleDebug` verde | Hecha |
 | T4 | Tests compartidos | Tests a `commonTest` con `kotlin.test`, `MainDispatcherTest`, `ResetLinkTest`; `DocumentTabBarTest` con `getString` | T2, T3 | RF-05 · CA-06 | `:shared:testAndroidHostTest` | Hecha |
 | T5 | Textos equivalentes | `%d` → `%1$d`; quitar `\'`; comillas → ` ` | T2 | RF-01 · CA-01 | Decodificar los `.cvr` generados | Hecha |
-| T6 | Validación | Build, tests, lint, tests instrumentados, búsqueda de tokens del diseño, emulador | T1–T5 | CA-01…CA-06 | Resultados abajo | Hecha (parcial: CA-01 sin Mis Cuadernos en el emulador, CA-05 sin sesión real) |
+| T6 | Validación | Build, tests, lint, tests instrumentados, búsqueda de tokens del diseño, emulador | T1–T5 | CA-01…CA-06 | Resultados abajo | Hecha |
 
 ## Registro de validación (2026-11-04)
 
@@ -47,12 +47,13 @@ Entorno: Windows 11, emulador `Medium_Phone` (API 37, `emulator-5554`). El móvi
 | CA-01 | Login con un correo inexistente → «Incorrect email or password» desde Supabase (red con Ktor OkHttp en `:shared`) | OK |
 | CA-01 | Registro: contraseña corta → «Use at least 8 characters» (plural) y «Passwords don't match» | OK |
 | CA-01 | Idioma de la app `es-ES`: registro («Crea tu cuenta», «Repite la contraseña») y «¿Olvidaste tu contraseña?» («Enviar enlace») | OK |
-| CA-01 | Mis Cuadernos y detalle en el emulador | **No probado**: hace falta una cuenta confirmada. El detalle está cubierto por `DocumentTabBarTest` |
+| CA-01 | Mis Cuadernos tras iniciar sesión con una cuenta confirmada | OK (probado por la usuaria, 2026-11-04). El detalle también está cubierto por `DocumentTabBarTest` |
 | CA-02 | `error_code=otp_expired` con la app abierta (`onNewIntent`) → «This link is not valid or has expired.» + «Request a new link»; al girar no se reabre | OK |
 | CA-02 | `code=fake-code-123` con la app cerrada → mismo aviso; al girar se mantiene; Atrás → inicio de sesión | OK |
 | CA-03 | Registro con correo y contraseña; girar → todo se mantiene; `am kill` en segundo plano y reabrir → vuelve al registro con el correo. La contraseña no se guarda, igual que antes | OK |
 | CA-05 | Instalación limpia y `pm clear` → inicio de sesión | OK |
-| CA-05 | Actualizar encima de una sesión iniciada | **Bloqueado**: la cuenta de prueba no está confirmada, así que no se puede iniciar sesión. supabase-kt (misma versión y mismo almacenamiento) es el que guarda la sesión, pero no está comprobado en el dispositivo |
+| CA-05 | Sesión iniciada: cerrar y volver a abrir la app mantiene la sesión | OK (probado por la usuaria, 2026-11-04) |
+| CA-02 | Restablecer la contraseña con un enlace real del correo | OK (probado por la usuaria, 2026-11-04) |
 
 **Incidencia no reproducible:** en la primera instalación tras arrancar el emulador desde su snapshot, un volcado de UI mostró Mis Cuadernos. Ese volcado dio el error `null root node`. Con instalación limpia, `pm clear` y arranque en frío se vio siempre el inicio de sesión. El log de Supabase dice «No session found in storage».
 
