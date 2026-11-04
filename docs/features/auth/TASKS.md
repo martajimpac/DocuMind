@@ -85,3 +85,26 @@ anteriores). Lint 0 errores. `grep` del design system sin resultados.
 | CA-18 | Superado: enlace con `error_code=otp_expired` (en frío) y con código falso (app abierta) → «This link is not valid or has expired.»; «Request a new link» abre la recuperación; «Atrás» vuelve al login. |
 | CA-19 | Cubierto por tests (cancelación cierra la sesión, también durante la verificación); en dispositivo necesita un enlace real. |
 
+
+### Revisión tras la conversión a KMP (2026-11-04)
+
+- El código de auth pasó a `shared/src/commonMain` sin cambios de comportamiento (ver `docs/features/kmp-conversion`).
+- Cambió la ruta de los archivos citados arriba: `app/src/main/java/...` ahora es `shared/src/commonMain/kotlin/...`.
+- El enlace de recuperación ahora llega como `MainActivity.onNewIntent` → `App(incomingLink)` → `ResetLink.parse` (Ktor `Url`).
+
+Se repitió en el emulador con el código compartido:
+
+| CA | Resultado |
+| --- | --- |
+| CA-03, CA-04 | OK: errores de campos vacíos, contraseña corta (plural) y contraseñas distintas |
+| CA-06 | OK: «Incorrect email or password» desde Supabase |
+| CA-12 | OK: el registro conserva sus datos al girar y el correo tras matar el proceso |
+| CA-18 | OK: `otp_expired` con la app abierta y código falso con la app cerrada; no se reabre al girar |
+| CA-19 (parcial) | OK: Atrás desde el aviso de enlace no válido vuelve al inicio de sesión |
+
+Siguen pendientes, por los mismos motivos:
+
+| CA | Qué falta | Quién |
+| --- | --- | --- |
+| CA-05, CA-07, CA-08 | La cuenta de prueba sigue sin confirmar (consultado en `auth.users` el 2026-11-04). No se volvió a intentar confirmarla por SQL porque los permisos ya lo denegaron | Usuaria: pulsar el correo de confirmación |
+| CA-16, CA-17, CA-19 (con sesión) | Enlace real de recuperación | Usuaria: añadir `documind://reset-password` a *Redirect URLs* y pedir un enlace |

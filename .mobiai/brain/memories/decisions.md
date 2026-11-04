@@ -38,3 +38,20 @@ Decision (auth, 2026-11-03): email/password auth with Supabase Auth through supa
 - app/src/main/java/com/example/chatbot/navigation/SessionViewModel.kt
 - app/src/main/java/com/example/chatbot/di/AppModule.kt
 - docs/features/auth/PLAN.md
+
+## Kotlin Multiplatform: :shared (KMP library) + thin :app
+
+- id: kotlin-multiplatform-shared-kmp-library-thin-app-20261104-121639
+- type: architecture_decision
+- status: active
+- platform: kmp
+- area: architecture
+- date: 2026-11-04
+
+Decision (kmp-conversion, 2026-11-04): AGP 9 does not allow kotlin-multiplatform in a com.android.application module, so all app code (domain, data, di, navigation, ui, resources) lives in :shared (com.android.kotlin.multiplatform.library + iosArm64/iosSimulatorArm64, framework Shared) and :app only keeps MainActivity, DocuMindApplication (initKoin with SupabaseConfig from BuildConfig), manifest and launcher assets. Versions pinned by Kotlin 2.2.10: Compose Multiplatform 1.9.3, material3 1.9.0, JetBrains lifecycle 2.9.4 and navigation 2.9.0, ktor-client-darwin 3.3.1. Type-safe @Serializable routes; argument names equal the SavedStateHandle keys. MainActivity passes intent.dataString (also onNewIntent) to App(incomingLink); ResetLink.parse uses io.ktor.http.Url. Tests run with :shared:testAndroidHostTest. iOS is not compiled on Windows.
+
+### Files
+- shared/build.gradle.kts
+- app/src/main/java/com/example/chatbot/MainActivity.kt
+- shared/src/commonMain/kotlin/com/example/chatbot/navigation/AppNavigation.kt
+- docs/features/kmp-conversion/PLAN.md

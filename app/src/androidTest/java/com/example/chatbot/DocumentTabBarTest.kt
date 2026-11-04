@@ -8,10 +8,16 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.platform.app.InstrumentationRegistry
 import com.example.chatbot.ui.screens.detail.DetailTab
 import com.example.chatbot.ui.screens.detail.NotebookDetailScreen
+import com.example.chatbot.resources.Res
+import com.example.chatbot.resources.cd_back
+import com.example.chatbot.resources.cd_more_options
+import com.example.chatbot.resources.detail_ready_to_chat
 import com.example.chatbot.ui.theme.ChatbotTheme
+import kotlinx.coroutines.runBlocking
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.getString
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -24,8 +30,7 @@ class DocumentTabBarTest {
     @get:Rule
     val composeRule = createComposeRule()
 
-    private val context = InstrumentationRegistry.getInstrumentation().targetContext
-    private val labels = DetailTab.entries.associateWith { context.getString(it.label) }
+    private val labels = DetailTab.entries.associateWith { text(it.label) }
 
     @Before
     fun setUp() {
@@ -51,10 +56,10 @@ class DocumentTabBarTest {
 
     @Test
     fun headerShowsBackTitleSubtitleAndMoreOptions() {
-        composeRule.onNodeWithContentDescription(context.getString(R.string.cd_back)).assertIsDisplayed()
+        composeRule.onNodeWithContentDescription(text(Res.string.cd_back)).assertIsDisplayed()
         composeRule.onNodeWithText(TITLE).assertIsDisplayed()
-        composeRule.onNodeWithText(context.getString(R.string.detail_ready_to_chat), substring = true).assertIsDisplayed()
-        composeRule.onNodeWithContentDescription(context.getString(R.string.cd_more_options)).assertIsDisplayed()
+        composeRule.onNodeWithText(text(Res.string.detail_ready_to_chat), substring = true).assertIsDisplayed()
+        composeRule.onNodeWithContentDescription(text(Res.string.cd_more_options)).assertIsDisplayed()
     }
 
     private fun assertOnlySelected(selected: DetailTab) {
@@ -63,6 +68,9 @@ class DocumentTabBarTest {
             if (tab == selected) node.assertIsSelected() else node.assertIsNotSelected()
         }
     }
+
+    // Shared strings in the device language, read the same way the screen reads them.
+    private fun text(resource: StringResource): String = runBlocking { getString(resource) }
 
     private companion object {
         const val TITLE = "Annual Report 2024"

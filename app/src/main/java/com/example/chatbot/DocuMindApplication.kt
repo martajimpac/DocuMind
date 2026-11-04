@@ -1,16 +1,15 @@
 package com.example.chatbot
 
 import android.app.Application
-import com.example.chatbot.di.appModule
+import com.example.chatbot.di.SupabaseConfig
+import com.example.chatbot.di.initKoin
 import org.koin.android.ext.koin.androidContext
-import org.koin.core.context.startKoin
 
 class DocuMindApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        startKoin {
+        initKoin(SupabaseConfig(url = BuildConfig.SUPABASE_URL, publishableKey = BuildConfig.SUPABASE_PUBLISHABLE_KEY)) {
             androidContext(this@DocuMindApplication)
-            modules(appModule)
         }
     }
 }

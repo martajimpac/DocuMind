@@ -20,3 +20,17 @@ Problem (2026-11-03): composable(deepLinks = navDeepLink { uriPattern = "documin
 
 ### Files
 - app/src/main/java/com/example/chatbot/navigation/AppNavigation.kt
+
+## Compose Multiplatform strings differ from Android strings.xml
+
+- id: compose-multiplatform-strings-differ-from-android-strings-xm-20261104-121639
+- type: bug_fix
+- status: active
+- platform: kmp
+- area: resources
+- date: 2026-11-04
+
+Problem (2026-11-04): after moving strings.xml to composeResources, the UI showed Don\'t and literal quotes. Compose Multiplatform 1.9 does not unescape \' and keeps Android quote wrapping (" · "), and only substitutes positional args (%1$d, not %d). Solution: plain apostrophes, \u0020 for leading/trailing spaces, %1$d in plurals. Check by decoding the generated .cvr files (base64) under shared/build/generated/assets.
+
+### Files
+- shared/src/commonMain/composeResources/values/strings.xml
