@@ -24,4 +24,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "Chatbot"
 include(":app")
+include(":shared")
  

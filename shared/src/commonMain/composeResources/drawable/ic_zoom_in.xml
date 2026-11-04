@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Icon "zoom-in" exported from the DocuMind Figma file. Tinted at the call site. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="19dp"
+    android:height="19dp"
+    android:viewportWidth="19"
+    android:viewportHeight="19">
+    <path
+        android:pathData="M16.6253 16.6253L13.1867 13.1867M13.1867 13.1867L13.1816 13.1816M13.1867 13.1867C14.3328 12.0406 15.0417 10.4572 15.0417 8.70833C15.0417 5.21053 12.2061 2.375 8.70833 2.375C5.21053 2.375 2.375 5.21053 2.375 8.70833C2.375 12.2061 5.21053 15.0417 8.70833 15.0417C10.4572 15.0417 12.0406 14.3328 13.1867 13.1867ZM8.70833 6.33333V8.70833M8.70833 8.70833V11.0833M8.70833 8.70833H6.33333M8.70833 8.70833H11.0833"
+        android:strokeWidth="1.8"
+        android:strokeColor="#FF000000"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000" />
+</vector>
