@@ -24,21 +24,9 @@
     <string name="library_recent">Cuadernos recientes</string>
     <string name="library_sort_last_opened">Último abierto</string>
     <string name="library_privacy">Documentos privados. Solo tú tienes acceso.</string>
-    <string name="library_continue">Continúa tu conversación</string>
-    <string name="library_opened_just_now">Abierto hace un momento</string>
-    <string name="library_added_yesterday">Añadido ayer</string>
-    <string name="library_added_oct_24">Añadido el 24 oct</string>
 
     <!-- Sample documents -->
     <string name="doc_annual_report">Informe anual 2024</string>
-    <string name="doc_brand_guidelines">Guía de marca</string>
-    <string name="doc_research_summary">Resumen de investigación</string>
-    <string name="doc_annual_report_size">2,4 MB</string>
-    <string name="doc_brand_guidelines_size">1,8 MB</string>
-    <string name="doc_research_summary_size">940 KB</string>
-    <string name="cover_brand_guidelines">ESTUDIO</string>
-    <string name="cover_research_summary">NOTAS</string>
-    <string name="notebook_default_title">Cuaderno nuevo</string>
 
     <!-- Document detail -->
     <string name="detail_ready_to_chat">Listo para conversar</string>
@@ -147,4 +135,27 @@
     <string name="lab_key_ideas_body">Extrae los puntos más relevantes y preguntas frecuentes.</string>
     <string name="lab_faq">Preguntas frecuentes</string>
     <string name="lab_faq_body">Consulta las dudas más comunes resueltas por la IA.</string>
+
+    <!-- Cuadernos y documentos (funcionalidad notebooks-documents) -->
+    <string name="library_added_on">Añadido el %1$s</string>
+    <string name="library_empty_title">Aún no tienes cuadernos</string>
+    <string name="library_empty_body">Crea tu primer cuaderno a partir de un PDF para empezar.</string>
+    <string name="library_load_error">No hemos podido cargar tus cuadernos.</string>
+    <string name="action_retry">Reintentar</string>
+    <string name="notebook_error_network">Sin conexión. Revisa tu red e inténtalo de nuevo.</string>
+    <string name="notebook_error_limit">Este cuaderno ya tiene el máximo de 20 fuentes.</string>
+    <string name="notebook_error_invalid_file">Se ha rechazado el archivo. Usa un PDF de hasta 20 MB.</string>
+    <string name="notebook_error_unknown">Algo ha ido mal. Inténtalo de nuevo.</string>
+    <string name="pdf_error_empty">Este archivo está vacío.</string>
+    <string name="pdf_error_too_large">Este archivo supera los 20 MB.</string>
+    <string name="pdf_error_not_pdf">Este archivo no es un PDF válido.</string>
+    <string name="pdf_error_read_failed">No se ha podido abrir el archivo. Prueba con otro.</string>
+    <string name="upload_status_progress">Subiendo… %1$s</string>
+    <string name="upload_cancel_title">¿Cancelar la subida?</string>
+    <string name="upload_cancel_body">El archivo no se añadirá.</string>
+    <string name="upload_cancel_confirm">Cancelar subida</string>
+    <string name="upload_cancel_dismiss">Seguir subiendo</string>
+    <string name="detail_add_source">Añadir fuente</string>
+    <string name="detail_source_limit">Este cuaderno ha alcanzado el máximo de 20 fuentes.</string>
+    <string name="detail_load_error">No hemos podido cargar este cuaderno.</string>
 </resources>

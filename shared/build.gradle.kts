@@ -45,12 +45,15 @@ kotlin {
             implementation(libs.jetbrains.navigation.compose)
             implementation(project.dependencies.platform(libs.supabase.bom))
             implementation(libs.supabase.auth)
+            implementation(libs.supabase.postgrest)
+            implementation(libs.supabase.storage)
             implementation(project.dependencies.platform(libs.koin.bom))
             api(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
         }
         androidMain.dependencies {
+            implementation(libs.androidx.activity.compose)
             implementation(libs.ktor.client.okhttp)
         }
         iosMain.dependencies {

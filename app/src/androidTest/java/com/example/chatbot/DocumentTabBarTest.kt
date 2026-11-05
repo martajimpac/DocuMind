@@ -9,7 +9,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.chatbot.ui.screens.detail.DetailTab
-import com.example.chatbot.ui.screens.detail.NotebookDetailScreen
+import com.example.chatbot.ui.screens.detail.NotebookDetailContent
 import com.example.chatbot.resources.Res
 import com.example.chatbot.resources.cd_back
 import com.example.chatbot.resources.cd_more_options
@@ -36,7 +36,7 @@ class DocumentTabBarTest {
     fun setUp() {
         composeRule.setContent {
             ChatbotTheme {
-                NotebookDetailScreen(notebookTitle = TITLE, onBackClick = {})
+                NotebookDetailContent(notebookTitle = TITLE, onBackClick = {})
             }
         }
     }

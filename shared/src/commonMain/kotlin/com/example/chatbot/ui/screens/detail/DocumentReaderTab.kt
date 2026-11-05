@@ -85,9 +85,15 @@ private val revenueRows = listOf(
     RevenueRow(Res.string.page_table_other, previous = 0.46, current = 0.38),
 )
 
-/** Document tab: sample PDF page and reader controls. Paging and zoom are not functional yet. */
+/**
+ * Document tab: [sources] on top (the notebook's PDFs), then a sample PDF page and reader
+ * controls. The page is still sample content; paging and zoom are not functional yet.
+ */
 @Composable
-fun DocumentReaderTab(modifier: Modifier = Modifier) {
+fun DocumentReaderTab(
+    modifier: Modifier = Modifier,
+    sources: @Composable () -> Unit = {},
+) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -95,6 +101,7 @@ fun DocumentReaderTab(modifier: Modifier = Modifier) {
             .padding(Dimens.space16),
         verticalArrangement = Arrangement.spacedBy(Dimens.space10),
     ) {
+        sources()
         SamplePdfPage()
         ReaderControls()
     }
