@@ -102,18 +102,16 @@ fun AppNavigation(
 
         composable<NotebooksRoute> {
             NotebooksScreen(
-                onNavigateToDetail = { notebookTitle ->
-                    navController.navigate(NotebookDetailRoute(notebookTitle))
+                onOpenNotebook = { id, title ->
+                    navController.navigate(NotebookDetailRoute(notebookId = id, title = title)) { launchSingleTop = true }
                 },
                 onSignOut = sessionViewModel::signOut,
             )
         }
 
-        composable<NotebookDetailRoute> { backStackEntry ->
-            NotebookDetailScreen(
-                notebookTitle = backStackEntry.toRoute<NotebookDetailRoute>().title,
-                onBackClick = { navController.popBackStack() },
-            )
+        composable<NotebookDetailRoute> {
+            // The ViewModel reads notebookId and title from the route through SavedStateHandle.
+            NotebookDetailScreen(onBackClick = { navController.popBackStack() })
         }
     }
 

@@ -28,23 +28,10 @@
     <string name="library_recent">Recent notebooks</string>
     <string name="library_sort_last_opened">Last opened</string>
     <string name="library_privacy">Private documents. Only you have access.</string>
-    <string name="library_continue">Continue your conversation</string>
-    <string name="library_opened_just_now">Opened just now</string>
-    <string name="library_added_yesterday">Added yesterday</string>
-    <string name="library_added_oct_24">Added Oct 24</string>
     <string name="cover_label" translatable="false">PDF</string>
 
     <!-- Sample documents -->
     <string name="doc_annual_report">Annual Report 2024</string>
-    <string name="doc_brand_guidelines">Brand Guidelines</string>
-    <string name="doc_research_summary">Research Summary</string>
-    <string name="doc_annual_report_size">2.4 MB</string>
-    <string name="doc_brand_guidelines_size">1.8 MB</string>
-    <string name="doc_research_summary_size">940 KB</string>
-    <string name="cover_annual_report" translatable="false">N / 24</string>
-    <string name="cover_brand_guidelines">STUDIO</string>
-    <string name="cover_research_summary">NOTES</string>
-    <string name="notebook_default_title">New notebook</string>
 
     <!-- Document detail -->
     <string name="detail_ready_to_chat">Ready to chat</string>
@@ -154,4 +141,27 @@
     <string name="lab_key_ideas_body">Extract the most relevant points and frequent questions.</string>
     <string name="lab_faq">Frequently asked questions</string>
     <string name="lab_faq_body">See the most common questions answered by the AI.</string>
+
+    <!-- Notebooks and documents (feature notebooks-documents) -->
+    <string name="library_added_on">Added %1$s</string>
+    <string name="library_empty_title">No notebooks yet</string>
+    <string name="library_empty_body">Create your first notebook from a PDF to get started.</string>
+    <string name="library_load_error">We couldn't load your notebooks.</string>
+    <string name="action_retry">Retry</string>
+    <string name="notebook_error_network">No connection. Check your network and try again.</string>
+    <string name="notebook_error_limit">This notebook already has the maximum of 20 sources.</string>
+    <string name="notebook_error_invalid_file">The file was rejected. Use a PDF of up to 20 MB.</string>
+    <string name="notebook_error_unknown">Something went wrong. Try again.</string>
+    <string name="pdf_error_empty">This file is empty.</string>
+    <string name="pdf_error_too_large">This file is larger than 20 MB.</string>
+    <string name="pdf_error_not_pdf">This file is not a valid PDF.</string>
+    <string name="pdf_error_read_failed">This file couldn't be opened. Try another one.</string>
+    <string name="upload_status_progress">Uploading… %1$s</string>
+    <string name="upload_cancel_title">Cancel the upload?</string>
+    <string name="upload_cancel_body">The file won't be added.</string>
+    <string name="upload_cancel_confirm">Cancel upload</string>
+    <string name="upload_cancel_dismiss">Keep uploading</string>
+    <string name="detail_add_source">Add source</string>
+    <string name="detail_source_limit">This notebook has reached the maximum of 20 sources.</string>
+    <string name="detail_load_error">We couldn't load this notebook.</string>
 </resources>

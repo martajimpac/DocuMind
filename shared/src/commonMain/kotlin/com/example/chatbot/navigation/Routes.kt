@@ -23,5 +23,6 @@ data class ResetPasswordRoute(
 @Serializable
 data object NotebooksRoute
 
+/** The title is shown at once, before the notebook is loaded by [notebookId]. */
 @Serializable
-data class NotebookDetailRoute(val title: String)
+data class NotebookDetailRoute(val notebookId: String, val title: String)

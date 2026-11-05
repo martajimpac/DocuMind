@@ -55,3 +55,19 @@ Decision (kmp-conversion, 2026-11-04): AGP 9 does not allow kotlin-multiplatform
 - app/src/main/java/com/example/chatbot/MainActivity.kt
 - shared/src/commonMain/kotlin/com/example/chatbot/navigation/AppNavigation.kt
 - docs/features/kmp-conversion/PLAN.md
+
+## Notebooks: upload-first to Storage, rows via one SQL function, RLS everywhere
+
+- id: notebooks-upload-first-to-storage-rows-via-one-sql-function-20261105-091414
+- type: architecture_decision
+- status: active
+- platform: kmp
+- area: notebooks_documents
+- date: 2026-11-05
+
+Decision (notebooks-documents, 2026-11-05): the app talks to Supabase directly (no FastAPI for this feature). PDFs go to the private bucket documents at {user_id}/{notebook_id}/{document_id}.pdf (20 MB, application/pdf); then create_notebook_with_document / add_document (SECURITY INVOKER) create the rows in one transaction, computing the path and taking size_bytes from storage.objects metadata. A before-insert trigger with pg_advisory_xact_lock caps 20 sources per notebook. Tables have RLS select/insert own only (no update/delete yet). The repository deletes the file on upload failure or cancellation, but not after the RPC was sent (unknown outcome): a stray file is preferred to a source without file. Migrations live in supabase/migrations and are applied with the Supabase MCP (no CLI on this PC). Test RLS with a DO block that switches role/jwt claims and ends with RAISE EXCEPTION so everything rolls back.
+
+### Files
+- supabase/migrations/20261104180000_notebooks_documents.sql
+- shared/src/commonMain/kotlin/com/example/chatbot/data/repository/SupabaseNotebookRepository.kt
+- docs/features/notebooks-documents/PLAN.md

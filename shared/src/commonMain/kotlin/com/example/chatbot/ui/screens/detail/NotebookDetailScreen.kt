@@ -14,6 +14,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.backhandler.BackHandler
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.chatbot.ui.components.CancelUploadDialog
+import com.example.chatbot.ui.files.rememberPdfPicker
+import com.example.chatbot.ui.utils.ObserveAsEvents
+import org.koin.compose.viewmodel.koinViewModel
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
@@ -44,11 +51,53 @@ enum class DetailTab(val label: StringResource, val icon: DrawableResource) {
 // Sample document length shown in the header (no real documents yet).
 private const val SAMPLE_PAGE_COUNT = 24
 
+@OptIn(ExperimentalComposeUiApi::class) // BackHandler is still experimental in Compose Multiplatform 1.9.
 @Composable
 fun NotebookDetailScreen(
+    onBackClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: NotebookDetailViewModel = koinViewModel(),
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val pickPdf = rememberPdfPicker(viewModel::onPdfPicked)
+
+    ObserveAsEvents(viewModel.events) { event ->
+        when (event) {
+            NotebookDetailEvent.Leave -> onBackClick()
+        }
+    }
+    // CA-12: Back (system or top bar) during an upload asks before cancelling it.
+    BackHandler(enabled = uiState.interceptBack) { viewModel.onBackPressed() }
+
+    NotebookDetailContent(
+        notebookTitle = uiState.title,
+        onBackClick = { if (uiState.interceptBack) viewModel.onBackPressed() else onBackClick() },
+        modifier = modifier,
+        documentSources = {
+            SourcesSection(
+                uiState = uiState,
+                onAddSource = pickPdf,
+                onRetryLoad = viewModel::onRetryLoad,
+                onRetryUpload = viewModel::onRetryUpload,
+            )
+        },
+    )
+
+    if (uiState.showCancelDialog) {
+        CancelUploadDialog(
+            onConfirm = viewModel::onCancelUploadConfirmed,
+            onDismiss = viewModel::onCancelDialogDismissed,
+        )
+    }
+}
+
+/** Stateless detail layout (header, tabs, tab content). Used by the screen, previews and UI tests. */
+@Composable
+fun NotebookDetailContent(
     notebookTitle: String,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
+    documentSources: @Composable () -> Unit = {},
 ) {
     var selectedTab by rememberSaveable { mutableStateOf(DetailTab.CHAT) }
     val pages = pluralStringResource(Res.plurals.pages_count, SAMPLE_PAGE_COUNT, SAMPLE_PAGE_COUNT)
@@ -86,7 +135,7 @@ fun NotebookDetailScreen(
         ) {
             when (selectedTab) {
                 DetailTab.CHAT -> ChatTab()
-                DetailTab.DOCUMENT -> DocumentReaderTab()
+                DetailTab.DOCUMENT -> DocumentReaderTab(sources = documentSources)
                 DetailTab.LAB -> LabTab()
             }
         }
@@ -95,8 +144,8 @@ fun NotebookDetailScreen(
 
 @Preview
 @Composable
-private fun NotebookDetailScreenPreview() {
+private fun NotebookDetailContentPreview() {
     ChatbotTheme {
-        NotebookDetailScreen(notebookTitle = "Annual Report 2024", onBackClick = {})
+        NotebookDetailContent(notebookTitle = "Annual Report 2024", onBackClick = {})
     }
 }
